@@ -1,7 +1,5 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Player : MonoBehaviour
 {
@@ -12,34 +10,34 @@ public class Player : MonoBehaviour
     [SerializeField] private int pelletsCount = 8;
     [SerializeField] private float spreadIntensity = 10.0f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        float zSpeed = 5 * Time.deltaTime;
+        transform.Translate(0, 0, zSpeed);
     }
+
 
     //PlayerInputから[Move]アクションを呼び出すメソッド
     public void OnMove(InputValue value)
     {
-        //第一引数にPlayerInputから渡された値[InputValue]を取得する
-        Debug.Log($"移動[{value.Get<Vector2>()}");
+        Vector2 inputVector = value.Get<Vector2>();
+        Debug.Log($"移動: {inputVector}");
 
-        Vector3 move = new Vector3(value.Get<Vector2>().x, value.Get<Vector2>().y, 0 );
+        // 移動後の位置を予測して制限をかける
+        Vector3 nextPosition = transform.position + new Vector3(inputVector.x, inputVector.y, 0);
 
-        if (transform.position.x + value.Get<Vector2>().x < -8 || transform.position.x + value.Get<Vector2>().x > 8) return;
+        if (nextPosition.x < -8 || nextPosition.x > 8) return;
+        if (nextPosition.y < -4 || nextPosition.y > 6) return;
 
-        if (transform.position.y + value.Get<Vector2>().y < -4 || transform.position.y + value.Get<Vector2>().y > 6) return;
+        // グリッド移動（1マスずつ移動）にするための四捨五入
+        Vector3 move = new Vector3(Mathf.Round(inputVector.x), Mathf.Round(inputVector.y), 0);
 
-        move.x = Mathf.Round(move.x);
-        move.y = Mathf.Round(move.y);
-
-        transform.Translate(move);
+        transform.Translate(move, Space.World); // プレイヤーの回転に影響されない絶対方向への移動
     }
 
     //PlayerInputから[Attack]アクションを呼び出すメソッド
@@ -47,30 +45,33 @@ public class Player : MonoBehaviour
     {
         if (!value.isPressed) return;
 
+        // shotPointが設定されていない場合は、自身の位置を発射点にする
+        Vector3 spawnPosition = shotPoint != null ? shotPoint.position : transform.position;
+
         for (int i = 0; i < pelletsCount; i++)
         {
             // 1. ランダムな拡散角度を計算
-            // 正面方向を基準に、上下左右にランダムな角度をつける
             float randomSpreadX = Random.Range(-spreadIntensity, spreadIntensity);
             float randomSpreadY = Random.Range(-spreadIntensity, spreadIntensity);
 
-            // 2. shotPointの回転にランダムな回転を合成
-            // 3Dの場合は Y軸とX軸にランダムを加えるのが一般的です
+            // 2. 【変更点】プレイヤーの回転（transform.rotation）にランダムな回転を合成
             Quaternion spreadRotation = Quaternion.Euler(randomSpreadX, randomSpreadY, 0);
-            Quaternion finalRotation = shotPoint.rotation * spreadRotation;
+            Quaternion finalRotation = transform.rotation * spreadRotation;
 
             // 3. 弾を生成
-            GameObject shell = Instantiate(bulletPrefab, shotPoint.position, finalRotation);
+            GameObject shell = Instantiate(bulletPrefab, spawnPosition, finalRotation);
 
             // 4. 物理演算で飛ばす
             Rigidbody shellRb = shell.GetComponent<Rigidbody>();
             if (shellRb != null)
             {
-                // 個別の弾の向き(forward)に向かって飛ばす
+                // 生成された弾の正面（forward）に向かって力を加える
                 shellRb.AddForce(shell.transform.forward * shellSpeed);
             }
+            // 2Dゲーム（Rigidbody2D）の場合は以下のように記述します
+            // Rigidbody2D shellRb2D = shell.GetComponent<Rigidbody2D>();
+            // if (shellRb2D != null) { shellRb2D.AddForce(shell.transform.up * shellSpeed); }
 
-            // 弾が重なりすぎないよう、寿命を少しランダムにしても面白いです
             Destroy(shell, 2.0f + Random.Range(0f, 1.0f));
         }
     }
