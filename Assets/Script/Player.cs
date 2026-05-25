@@ -10,6 +10,16 @@ public class Player : MonoBehaviour
     [SerializeField] private int pelletsCount = 8;
     [SerializeField] private float spreadIntensity = 10.0f;
 
+    [Header("＊＊＊移動値の設定")]
+    private Vector3 inputMoveVelocity;
+
+    [Header("＊＊＊回転軸の設定")]
+    public GameObject lookAxis;
+    public GameObject gyroAxis;
+    private Vector3 lookAngles;
+    private float gyroAngles;
+    public bool tiltInvart;
+
     void Start()
     {
         
@@ -19,6 +29,21 @@ public class Player : MonoBehaviour
     {
         float zSpeed = 5 * Time.deltaTime;
         transform.Translate(0, 0, zSpeed);
+
+        lookAngles.x += inputMoveVelocity.y * (tiltInvart ? -1 : 1);
+        lookAngles.y += inputMoveVelocity.x;
+        gyroAngles += inputMoveVelocity.x * -1;
+
+        lookAngles = Vector3.Lerp(lookAngles, Vector3.zero, Time.deltaTime * 3);
+        gyroAngles = Mathf.Lerp(gyroAngles, 0, Time.deltaTime * 3);
+
+
+        lookAngles.x = Mathf.Clamp(lookAngles.x, -15, 15);
+        lookAngles.y = Mathf.Clamp(lookAngles.y, -15, 15);
+        gyroAngles = Mathf.Clamp(gyroAngles, -15, 15);
+
+        lookAxis.transform.eulerAngles = lookAngles;
+        gyroAxis.transform.eulerAngles = new Vector3(0, 0, gyroAngles);
     }
 
 
@@ -38,6 +63,8 @@ public class Player : MonoBehaviour
         Vector3 move = new Vector3(Mathf.Round(inputVector.x), Mathf.Round(inputVector.y), 0);
 
         transform.Translate(move, Space.World); // プレイヤーの回転に影響されない絶対方向への移動
+
+        inputMoveVelocity = move;
     }
 
     //PlayerInputから[Attack]アクションを呼び出すメソッド

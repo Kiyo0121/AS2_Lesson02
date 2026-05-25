@@ -793,7 +793,7 @@ MonoBehaviour:
   shotPoint: {fileID: 726695541}
   bulletPrefab: {fileID: 6238120495731785640, guid: 66b5e8270bcc98d42aeff116f5050760, type: 3}
   shellSpeed: 5000
-  pelletsCount: 8
+  pelletsCount: 7000
   spreadIntensity: 10
   lookAxis: {fileID: 1906999260}
   gyroAxis: {fileID: 1640042918}
@@ -866,7 +866,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640042918}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1098,7 +1098,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1906999260}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
