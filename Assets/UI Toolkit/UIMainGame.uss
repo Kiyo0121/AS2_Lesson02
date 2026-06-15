@@ -1,0 +1,30 @@
+:root {
+ 
+}
+ 
+.unity-label {
+	opacity: 1;
+	color: black;
+}
+ 
+#root-container {
+	flex-direction: row;
+}
+ 
+#option-container {
+	flex-direction: row-reverse;
+}
+ 
+.green {
+	background-color: green;
+}
+ 
+#score-container {
+	opacity: 1;
+	background-color: red;
+}
+ 
+#game-quit-button {
+	width: 100px;
+	height: 100px;
+}

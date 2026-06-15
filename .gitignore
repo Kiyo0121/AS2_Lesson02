@@ -104,3 +104,8 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Assets
+/[Aa]ssets/[Pp]roxy [Gg]ames/
+/[Aa]ssets/[Cc]artoon_[Tt]exture_[Pp]ack/
+/[Aa]ssets/[Tt]ree9/
