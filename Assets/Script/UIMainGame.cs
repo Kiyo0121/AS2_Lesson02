@@ -13,7 +13,7 @@ public class UIMainGame : MonoBehaviour
     void Start()
     {
         _root = uid.rootVisualElement;
-        _scoreText = _root.Q<Label>("Score-label");
+        _scoreText = _root.Q<Label>("score-label");
         _scoreText.text = "ここにスコアの文字列を表示する。";
         _gameQuitButton = _root.Q<Button>("game-quit-button");
         _gameQuitButton.clicked += () => { Debug.Log("hoge"); };

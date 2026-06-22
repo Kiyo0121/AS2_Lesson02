@@ -20,9 +20,15 @@ public class Player : MonoBehaviour
     private float gyroAngles;
     public bool tiltInvart;
 
+    [Header("–––ƒoƒŠƒA‚Ìİ’è")]
+    public GameObject barrier;
+    public MeshRenderer barrierRenderer;
+    public bool barrierActivation;
+
+
     void Start()
     {
-        
+        Application.targetFrameRate = 60;
     }
 
     void Update()
@@ -100,6 +106,18 @@ public class Player : MonoBehaviour
             // if (shellRb2D != null) { shellRb2D.AddForce(shell.transform.up * shellSpeed); }
 
             Destroy(shell, 2.0f + Random.Range(0f, 1.0f));
+        }
+    }
+
+    void OnTriggerEnter(Collider collision)
+    {
+        if(collision.transform.tag.Equals("Item/Barrier"))
+        {
+            Material m = barrierRenderer.material;
+
+            barrierActivation = true;
+
+            m.SetInt("_IsActive", 1);
         }
     }
 }
