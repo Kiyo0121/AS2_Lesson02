@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     [Header("** Shot Settings **")]
     public Transform shotPoint;
     public GameObject bulletPrefab;
+    public GameObject effectPrefab;
     [SerializeField] private float shellSpeed = 1000.0f;
     [SerializeField] private int pelletsCount = 8;
     [SerializeField] private float spreadIntensity = 10.0f;
@@ -57,13 +58,12 @@ public class Player : MonoBehaviour
     public void OnMove(InputValue value)
     {
         Vector2 inputVector = value.Get<Vector2>();
-        Debug.Log($"移動: {inputVector}");
 
         // 移動後の位置を予測して制限をかける
         Vector3 nextPosition = transform.position + new Vector3(inputVector.x, inputVector.y, 0);
 
         if (nextPosition.x < -8 || nextPosition.x > 8) return;
-        if (nextPosition.y < -4 || nextPosition.y > 6) return;
+        if (nextPosition.y < -6 || nextPosition.y > 6) return;
 
         // グリッド移動（1マスずつ移動）にするための四捨五入
         Vector3 move = new Vector3(Mathf.Round(inputVector.x), Mathf.Round(inputVector.y), 0);
@@ -106,18 +106,27 @@ public class Player : MonoBehaviour
             // if (shellRb2D != null) { shellRb2D.AddForce(shell.transform.up * shellSpeed); }
 
             Destroy(shell, 2.0f + Random.Range(0f, 1.0f));
+
+            if (effectPrefab != null)
+            {
+                // 銃口の位置にエフェクトを生成
+                GameObject effect = Instantiate(effectPrefab, shotPoint.position, shotPoint.rotation);
+
+                // エフェクトが自動で消えない場合は、2秒後に削除する設定
+                Destroy(effect, 2.0f);
+            }
         }
-    }
 
-    void OnTriggerEnter(Collider collision)
-    {
-        if(collision.transform.tag.Equals("Item/Barrier"))
+        void OnTriggerEnter(Collider collision)
         {
-            Material m = barrierRenderer.material;
+            if (collision.transform.tag.Equals("Item/Barrier"))
+            {
+                Material m = barrierRenderer.material;
 
-            barrierActivation = true;
+                barrierActivation = true;
 
-            m.SetInt("_IsActive", 1);
+                m.SetInt("_IsActive", 1);
+            }
         }
     }
 }

@@ -5,7 +5,5 @@
             <ui:Label text="score" name="score-label"/>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="option-contaier" style="flex-grow: 1;">
-        <ui:Button text="終了" name="game-quit-button"/>
-    </ui:VisualElement>
+    <ui:VisualElement name="option-contaier" style="flex-grow: 1;"/>
 </ui:UXML>
